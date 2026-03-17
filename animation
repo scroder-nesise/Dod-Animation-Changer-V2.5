@@ -1,0 +1,641 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+local RunService = game:GetService("RunService")
+local ClientAnimationsLOL = game:GetService("Players").LocalPlayer.PlayerScripts.ClientAnimations
+
+local animationsFolder = ReplicatedStorage:WaitForChild("Characters"):WaitForChild("Survivor"):WaitForChild("Civilian"):WaitForChild("Animations")
+local deletedCount = 0
+
+for _, item in ipairs(animationsFolder:GetChildren()) do
+	if item:IsA("Animation") then
+		item:Destroy()
+		deletedCount += 1
+	end
+end
+
+if deletedCount > 0 then
+	StarterGui:SetCore("SendNotification", {
+		Title = "Animations Deleted",
+		Text = "We have deleted " .. deletedCount .. " animation(s)",
+		Duration = 5
+	})
+end
+
+print("Deleted " .. deletedCount .. " Animation object(s) from Civilian.Animations")
+
+ClientAnimationsLOL.Enabled = false
+task.wait()
+ClientAnimationsLOL.Enabled = true
+
+local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+local function stopAllAnimations()
+	for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+		track:Stop()
+	end
+end
+
+stopAllAnimations()
+
+local animationSets = {
+	Pursuer = {
+		Zombie_1 = {Idle="108966832512824", Walk="140725165625502", Sprint="74766909298004", Special="133089990054529"},
+		HardestGame = {Idle="98065949472006", Walk="86090280531902", Sprint="80622745059905", Special="130969844291143"},
+		Derp = {Idle="116882648985413", Walk="116619914860672", Sprint="99710523608673", Special="127615305496836"},
+		MISO = {Idle="110261771932085", Walk="77767207227090", Sprint="84579013254629", Special="121553057496251"},
+		IQuot = {Idle="129538723059546", Walk="111262064101049", Sprint="133764223100629", Special="139854803244662"},
+		Bling_Pursuer = {Idle="90352838780824", Walk="137664000771043", Sprint="118293298340723", Special="87593869628310"},
+		Zombie_2 = {Idle="112741812425793", Walk="89072100139011", Sprint="83943871443312", Special="130969844291143"},
+		Seesaws = {Idle="105229530451214", Walk="87100633181273", Sprint="76006312248383", Special="115832056782174"},
+		Classic = {Idle="98065949472006", Walk="86090280531902", Sprint="80622745059905", Special="130969844291143"},
+		The_Stalker = {Idle="140579314892039", Walk="131123864457422", Sprint="113129644775079", Special="134576092674459"},
+		Phantasm = {Idle="80974060339218", Walk="80948338059832", Sprint="86509870627165", Special="87593869628310"},
+		Zombie = {Idle="80974060339218", Walk="80948338059832", Sprint="86509870627165", Special="87593869628310"},
+		Maze_Guy = {Idle="98065949472006", Walk="86090280531902", Sprint="80622745059905", Special="130969844291143"},
+		Avoider = {Idle="80974060339218", Walk="80948338059832", Sprint="86509870627165", Special="87593869628310"},
+		Clawsguy = {Idle="138700567973746", Walk="96333561042064", Sprint="96136930930416", Special="115832056782174"},
+		MeQuot = {Idle="123989154628992", Walk="115493664585359", Sprint="130682734432079", Special="139854803244662"},
+		Default = {Idle="80974060339218", Walk="80948338059832", Sprint="86509870627165", Special="87593869628310"},
+		Yourself_Pursuer = {Idle="80974060339218", Walk="80948338059832", Sprint="86509870627165", Special="87593869628310"},
+	},
+	Artful = {
+		Innovationful = {Idle="75829922277414", Walk="102669115888825", Sprint="131888686736060", Special="130969844291143"},
+		Kind_Gal = {Idle="94558501077182", Walk="136960484622651", Sprint="89260818951530", Special="111012730078117"},
+		Devesto = {Idle="75370292739676", Walk="70580402939971", Sprint="91726581626277", Special="118342888066359"},
+		Builder = {Idle="94473571249263", Walk="102572617659889", Sprint="100948610539178", Special="118342888066359"},
+		Cementful = {Idle="94473571249263", Walk="102572617659889", Sprint="100948610539178", Special="118342888066359"},
+		Orchestraful = {Idle="96089657207073", Walk="86166363798441", Sprint="84734698021418", Special="102942152690202"},
+		Evil_Guy = {Idle="94558501077182", Walk="136960484622651", Sprint="89260818951530", Special="111012730078117"},
+		Noliful = {Idle="94473571249263", Walk="102572617659889", Sprint="100948610539178", Special="118342888066359"},
+		Paintful = {Idle="94473571249263", Walk="102572617659889", Sprint="100948610539178", Special="118342888066359"},
+		Default = {Idle="94473571249263", Walk="102572617659889", Sprint="100948610539178", Special="118342888066359"},
+		Artistry = {Idle="94473571249263", Walk="102572617659889", Sprint="100948610539178", Special="118342888066359"},
+		Tixful = {Idle="94473571249263", Walk="102572617659889", Sprint="100948610539178", Special="118342888066359"},
+		SoRetro = {Idle="75829922277414", Walk="102669115888825", Sprint="131888686736060", Special="130969844291143"},
+		Swapful = {Idle="94473571249263", Walk="102572617659889", Sprint="100948610539178", Special="118342888066359"},
+		Seaful = {Idle="94473571249263", Walk="102572617659889", Sprint="100948610539178", Special="118342888066359"},
+	},
+	Harken = {
+		Ena = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+		Raigken = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+		Ruins = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+		Cesus = {Idle="109980283233330", Walk="123324217013146", Sprint="94668334962235", Special="71749363218670"},
+		Audie = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+		Sonorous = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+		Default = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+		Conceptual = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+		Ancient = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+		Hamken = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+		Mr_Screwy = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+		Discerna = {Idle="104774777136783", Walk="135226521217628", Sprint="119463021776325", Special="100130178279600"},
+	},
+	MROB = {
+		Default = {Idle="128876353799791", Walk="84523208605356", Sprint="134893121838000", Special="87593869628310"},
+	},
+	Killdroid = {
+		AwesomeDroid = {Idle="104698935553828", Walk="134273680881474", Sprint="87612866184239", Special="104679472375564"},
+		Turkeydroid = {Idle="90197302481794", Walk="125969711702313", Sprint="123837551946715", Special="126477594063454"},
+		Teadroid = {Idle="90197302481794", Walk="125969711702313", Sprint="123837551946715", Special="126477594063454"},
+		MLGdroid = {Idle="104698935553828", Walk="134273680881474", Sprint="87612866184239", Special="104679472375564"},
+		Jetdroid = {Idle="90197302481794", Walk="125969711702313", Sprint="123837551946715", Special="126477594063454"},
+		Default = {Idle="90197302481794", Walk="125969711702313", Sprint="123837551946715", Special="126477594063454"},
+		Pixeldroid = {Idle="104698935553828", Walk="134273680881474", Sprint="87612866184239", Special="104679472375564"},
+		Eggdroid = {Idle="90197302481794", Walk="125969711702313", Sprint="123837551946715", Special="126477594063454"},
+		Deathstar = {Idle="90197302481794", Walk="125969711702313", Sprint="123837551946715", Special="126477594063454"},
+		Livedroid = {Idle="90197302481794", Walk="125969711702313", Sprint="123837551946715", Special="126477594063454"},
+		Futuristic = {Idle="104698935553828", Walk="134273680881474", Sprint="87612866184239", Special="104679472375564"},
+	},
+	Badware = {
+		Aeroware = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+		Cookieware = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+		Runicware = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+		OMEGAWARE = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+		Loveware = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+		Devilware = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+		Default = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+		Spyware = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+		Goodware = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+		Angelware = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+		Wiperware = {Idle="136507569552573", Walk="83428305423587", Sprint="120893352730955", Special="87704069305565"},
+	},
+	Other = {
+		Civilian = {Idle="100930402371608", Walk="84388941697203", Sprint="137375023685630", Special="0"},
+		None = {Idle="0", Walk="0", Sprint="0", Special="0"},
+		Ghost = {Idle="110395159339100", Walk="133938914809228", Sprint="124260679864309", Special="0"},
+		Old_Civilian = {Idle="74309548749074", Walk="138161225743614", Sprint="79488319304371", Special="0"},
+		Paranoy = {Idle="134602487982711", Walk="83529184862062", Sprint="88244580627601", Special="0"}
+	},
+}
+
+local blendTime = 0.2
+local activeSetName, activeCategory = nil, nil
+local characterData = {}
+local favourites = {} -- { ["Category|SetName"] = true }
+local currentTabCategory = nil -- track which tab is open ("__FAVOURITES__" or a real category)
+local currentSearchText = ""
+
+local tabShortNames = {
+	Pursuer = "PR",
+	Badware = "BW",
+	Harken = "H",
+	MROB = "MR",
+	Killdroid = "KD",
+	Artful = "A",
+	Other = "?"
+}
+
+local function getFavKey(category, setName)
+	return category .. "|" .. setName
+end
+
+local function isFavourited(category, setName)
+	return favourites[getFavKey(category, setName)] == true
+end
+
+local function toggleFavourite(category, setName)
+	local key = getFavKey(category, setName)
+	if favourites[key] then
+		favourites[key] = nil
+	else
+		favourites[key] = true
+	end
+end
+
+local function loadAnimationSet(character, category, setName)
+	if not character or not category or not setName then return end
+	local set = animationSets[category][setName]
+	if not set then return end
+	local humanoid = character:FindFirstChildOfClass("Humanoid")
+	if not humanoid then return end
+	local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid)
+	characterData[character] = characterData[character] or {}
+	local data = characterData[character]
+	if data.connection then data.connection:Disconnect() end
+	for _, track in pairs(data.movementTracks or {}) do
+		if track and track.IsPlaying then track:Stop(blendTime) end
+	end
+	local function loadAnim(animId, priority)
+		if animId and animId ~= "none" and animId ~= "0" then
+			local anim = Instance.new("Animation")
+			anim.AnimationId = "rbxassetid://" .. animId
+			local track = animator:LoadAnimation(anim)
+			if priority then track.Priority = priority end
+			return track
+		end
+	end
+	data.movementTracks = {
+		Idle = loadAnim(set.Idle, Enum.AnimationPriority.Core),
+		Walk = loadAnim(set.Walk, Enum.AnimationPriority.Movement),
+		Sprint = loadAnim(set.Sprint, Enum.AnimationPriority.Movement)
+	}
+	data.currentMovementTrack = nil
+	if data.movementTracks.Idle then
+		data.movementTracks.Idle:Play(blendTime)
+		data.currentMovementTrack = data.movementTracks.Idle
+	end
+	data.connection = RunService.RenderStepped:Connect(function()
+		local moving = humanoid.MoveDirection.Magnitude > 0.1
+		local walkSpeed = humanoid.WalkSpeed or 16
+		local newTrack
+		if moving and walkSpeed > 18 then
+			newTrack = data.movementTracks.Sprint
+		elseif moving then
+			newTrack = data.movementTracks.Walk
+		else
+			newTrack = data.movementTracks.Idle
+		end
+		if newTrack ~= data.currentMovementTrack then
+			if data.currentMovementTrack and data.currentMovementTrack.IsPlaying then
+				data.currentMovementTrack:Stop(blendTime)
+			end
+			if newTrack then newTrack:Play(blendTime) end
+			data.currentMovementTrack = newTrack
+		end
+	end)
+end
+
+-- GUI Setup
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AnimationMenuGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = PlayerGui
+
+-- Toggle button
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 60, 0, 40)
+toggleButton.Position = UDim2.new(1, -70, 0.5, -20)
+toggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.Text = "Menu"
+toggleButton.TextScaled = true
+toggleButton.Active = true
+toggleButton.Draggable = true
+toggleButton.Parent = screenGui
+Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 10)
+
+-- Main frame (taller to fit search bar)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 340, 0, 440)
+mainFrame.Position = UDim2.new(1, -360, 0, 20)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Visible = false
+mainFrame.Parent = screenGui
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 14)
+
+-- Title
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 0, 40)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Animation Menu"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextScaled = true
+titleLabel.Parent = mainFrame
+
+-- Close button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 36, 0, 36)
+closeBtn.Position = UDim2.new(1, 5, 0, -18)
+closeBtn.AnchorPoint = Vector2.new(0, 0)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.Text = "X"
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextScaled = true
+closeBtn.Parent = mainFrame
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
+
+-- Tab bar
+local tabBar = Instance.new("Frame")
+tabBar.Size = UDim2.new(1, -20, 0, 30)
+tabBar.Position = UDim2.new(0, 10, 0, 48)
+tabBar.BackgroundTransparency = 1
+tabBar.Parent = mainFrame
+local tabList = Instance.new("UIListLayout")
+tabList.FillDirection = Enum.FillDirection.Horizontal
+tabList.Padding = UDim.new(0, 4)
+tabList.Parent = tabBar
+
+-- ──────────────────────────────────────────────
+-- SEARCH BAR
+-- ──────────────────────────────────────────────
+local searchBox = Instance.new("TextBox")
+searchBox.Size = UDim2.new(1, -20, 0, 28)
+searchBox.Position = UDim2.new(0, 10, 0, 85)
+searchBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+searchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+searchBox.PlaceholderText = "🔍 Search animations..."
+searchBox.PlaceholderColor3 = Color3.fromRGB(130, 130, 130)
+searchBox.Font = Enum.Font.Gotham
+searchBox.TextSize = 14
+searchBox.Text = ""
+searchBox.ClearTextOnFocus = false
+searchBox.BorderSizePixel = 0
+searchBox.Parent = mainFrame
+Instance.new("UICorner", searchBox).CornerRadius = UDim.new(0, 8)
+
+-- Scroll frame (pushed down to make room for search bar)
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, -20, 1, -122)
+scrollFrame.Position = UDim2.new(0, 10, 0, 120)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+scrollFrame.BorderSizePixel = 0
+scrollFrame.ScrollBarThickness = 6
+scrollFrame.Parent = mainFrame
+Instance.new("UICorner", scrollFrame).CornerRadius = UDim.new(0, 8)
+local uiListLayout = Instance.new("UIListLayout")
+uiListLayout.Padding = UDim.new(0, 6)
+uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+uiListLayout.Parent = scrollFrame
+local scrollPadding = Instance.new("UIPadding")
+scrollPadding.PaddingTop = UDim.new(0, 6)
+scrollPadding.PaddingBottom = UDim.new(0, 6)
+scrollPadding.PaddingLeft = UDim.new(0, 4)
+scrollPadding.PaddingRight = UDim.new(0, 4)
+scrollPadding.Parent = scrollFrame
+
+local function updateScrollCanvas()
+	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, uiListLayout.AbsoluteContentSize.Y + 16)
+end
+
+uiListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateScrollCanvas)
+
+local function clearChildren(parent)
+	for _, c in ipairs(parent:GetChildren()) do
+		if c:IsA("GuiObject") then c:Destroy() end
+	end
+end
+
+-- ──────────────────────────────────────────────
+-- CREATE ANIMATION BUTTON (with ⭐ favourite star)
+-- ──────────────────────────────────────────────
+local function createAnimButton(setName, category, refreshCallback)
+	local container = Instance.new("Frame")
+	container.Size = UDim2.new(1, -8, 0, 38)
+	container.BackgroundTransparency = 1
+	container.Parent = scrollFrame
+
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, -44, 1, 0)
+	btn.Position = UDim2.new(0, 0, 0, 0)
+	btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.Font = Enum.Font.GothamBold
+	btn.Text = setName
+	btn.TextScaled = true
+	btn.AutoButtonColor = true
+	btn.BorderSizePixel = 0
+	btn.Parent = container
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+
+	-- Highlight if this is the active animation
+	if activeSetName == setName and activeCategory == category then
+		btn.BackgroundColor3 = Color3.fromRGB(80, 130, 80)
+	end
+
+	local starBtn = Instance.new("TextButton")
+	starBtn.Size = UDim2.new(0, 36, 1, 0)
+	starBtn.Position = UDim2.new(1, -36, 0, 0)
+	starBtn.BackgroundColor3 = isFavourited(category, setName)
+		and Color3.fromRGB(200, 160, 20)
+		or Color3.fromRGB(60, 60, 60)
+	starBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	starBtn.Font = Enum.Font.GothamBold
+	starBtn.Text = "★"
+	starBtn.TextScaled = true
+	starBtn.AutoButtonColor = true
+	starBtn.BorderSizePixel = 0
+	starBtn.Parent = container
+	Instance.new("UICorner", starBtn).CornerRadius = UDim.new(0, 10)
+
+	btn.MouseButton1Click:Connect(function()
+		activeSetName, activeCategory = setName, category
+		loadAnimationSet(LocalPlayer.Character, category, setName)
+		-- Refresh current view to update highlight
+		if refreshCallback then refreshCallback() end
+	end)
+
+	starBtn.MouseButton1Click:Connect(function()
+		toggleFavourite(category, setName)
+		starBtn.BackgroundColor3 = isFavourited(category, setName)
+			and Color3.fromRGB(200, 160, 20)
+			or Color3.fromRGB(60, 60, 60)
+		-- If we're on the favourites tab, refresh it
+		if currentTabCategory == "__FAVOURITES__" then
+			if refreshCallback then refreshCallback() end
+		end
+	end)
+
+	return container
+end
+
+-- ──────────────────────────────────────────────
+-- SHOW CATEGORY (with search filter support)
+-- ──────────────────────────────────────────────
+local function showCategory(category)
+	currentTabCategory = category
+	clearChildren(scrollFrame)
+
+	local filter = currentSearchText:lower()
+
+	for setName in pairs(animationSets[category]) do
+		if filter == "" or setName:lower():find(filter, 1, true) then
+			createAnimButton(setName, category, function()
+				showCategory(category)
+			end)
+		end
+	end
+
+	updateScrollCanvas()
+end
+
+-- ──────────────────────────────────────────────
+-- SHOW FAVOURITES TAB
+-- ──────────────────────────────────────────────
+local function showFavourites()
+	currentTabCategory = "__FAVOURITES__"
+	clearChildren(scrollFrame)
+
+	local filter = currentSearchText:lower()
+	local anyFound = false
+
+	for key, _ in pairs(favourites) do
+		local sep = key:find("|")
+		if sep then
+			local cat = key:sub(1, sep - 1)
+			local sName = key:sub(sep + 1)
+			if animationSets[cat] and animationSets[cat][sName] then
+				if filter == "" or sName:lower():find(filter, 1, true) or cat:lower():find(filter, 1, true) then
+					-- Show "[Category] SetName" label
+					local labelFrame = Instance.new("Frame")
+					labelFrame.Size = UDim2.new(1, -8, 0, 38)
+					labelFrame.BackgroundTransparency = 1
+					labelFrame.Parent = scrollFrame
+
+					local catLabel = Instance.new("TextLabel")
+					catLabel.Size = UDim2.new(0, 50, 1, 0)
+					catLabel.BackgroundColor3 = Color3.fromRGB(70, 70, 100)
+					catLabel.TextColor3 = Color3.fromRGB(180, 180, 255)
+					catLabel.Font = Enum.Font.GothamBold
+					catLabel.Text = tabShortNames[cat] or cat:sub(1, 2)
+					catLabel.TextScaled = true
+					catLabel.BorderSizePixel = 0
+					catLabel.Parent = labelFrame
+					Instance.new("UICorner", catLabel).CornerRadius = UDim.new(0, 8)
+
+					local btn = Instance.new("TextButton")
+					btn.Size = UDim2.new(1, -96, 1, 0)
+					btn.Position = UDim2.new(0, 56, 0, 0)
+					btn.BackgroundColor3 = (activeSetName == sName and activeCategory == cat)
+						and Color3.fromRGB(80, 130, 80)
+						or Color3.fromRGB(50, 50, 50)
+					btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+					btn.Font = Enum.Font.GothamBold
+					btn.Text = sName
+					btn.TextScaled = true
+					btn.AutoButtonColor = true
+					btn.BorderSizePixel = 0
+					btn.Parent = labelFrame
+					Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+
+					local starBtn = Instance.new("TextButton")
+					starBtn.Size = UDim2.new(0, 36, 1, 0)
+					starBtn.Position = UDim2.new(1, -36, 0, 0)
+					starBtn.BackgroundColor3 = Color3.fromRGB(200, 160, 20)
+					starBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+					starBtn.Font = Enum.Font.GothamBold
+					starBtn.Text = "★"
+					starBtn.TextScaled = true
+					starBtn.AutoButtonColor = true
+					starBtn.BorderSizePixel = 0
+					starBtn.Parent = labelFrame
+					Instance.new("UICorner", starBtn).CornerRadius = UDim.new(0, 10)
+
+					local capturedCat, capturedName = cat, sName
+					btn.MouseButton1Click:Connect(function()
+						activeSetName, activeCategory = capturedName, capturedCat
+						loadAnimationSet(LocalPlayer.Character, capturedCat, capturedName)
+						showFavourites()
+					end)
+					starBtn.MouseButton1Click:Connect(function()
+						toggleFavourite(capturedCat, capturedName)
+						showFavourites()
+					end)
+
+					anyFound = true
+				end
+			end
+		end
+	end
+
+	if not anyFound then
+		local emptyLabel = Instance.new("TextLabel")
+		emptyLabel.Size = UDim2.new(1, -8, 0, 50)
+		emptyLabel.BackgroundTransparency = 1
+		emptyLabel.TextColor3 = Color3.fromRGB(130, 130, 130)
+		emptyLabel.Font = Enum.Font.Gotham
+		emptyLabel.Text = filter ~= "" and "No favourites match search." or "No favourites yet.\nPress ★ on any animation!"
+		emptyLabel.TextScaled = true
+		emptyLabel.TextWrapped = true
+		emptyLabel.Parent = scrollFrame
+	end
+
+	updateScrollCanvas()
+end
+
+-- ──────────────────────────────────────────────
+-- SEARCH BAR — live filter
+-- ──────────────────────────────────────────────
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+	currentSearchText = searchBox.Text
+	if currentTabCategory == "__FAVOURITES__" then
+		showFavourites()
+	elseif currentTabCategory then
+		showCategory(currentTabCategory)
+	end
+end)
+
+-- ──────────────────────────────────────────────
+-- BUILD TAB BUTTONS
+-- ──────────────────────────────────────────────
+local tabButtons = {}
+
+local function setActiveTabColor(activeTab)
+	for _, tb in pairs(tabButtons) do
+		tb.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	end
+	activeTab.BackgroundColor3 = Color3.fromRGB(80, 110, 180)
+end
+
+-- Favourites tab (first)
+local favTabBtn = Instance.new("TextButton")
+favTabBtn.Size = UDim2.new(0, 40, 1, 0)
+favTabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+favTabBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
+favTabBtn.Font = Enum.Font.GothamBold
+favTabBtn.Text = "★"
+favTabBtn.TextScaled = true
+favTabBtn.AutoButtonColor = true
+favTabBtn.BorderSizePixel = 0
+favTabBtn.Parent = tabBar
+Instance.new("UICorner", favTabBtn).CornerRadius = UDim.new(0, 6)
+table.insert(tabButtons, favTabBtn)
+
+favTabBtn.MouseButton1Click:Connect(function()
+	setActiveTabColor(favTabBtn)
+	showFavourites()
+end)
+
+-- Category tabs
+for category in pairs(animationSets) do
+	local tabBtn = Instance.new("TextButton")
+	tabBtn.Size = UDim2.new(0, 40, 1, 0)
+	tabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	tabBtn.Font = Enum.Font.GothamBold
+	tabBtn.Text = tabShortNames[category] or category:sub(1, 2)
+	tabBtn.TextScaled = true
+	tabBtn.AutoButtonColor = true
+	tabBtn.BorderSizePixel = 0
+	tabBtn.Parent = tabBar
+	Instance.new("UICorner", tabBtn).CornerRadius = UDim.new(0, 6)
+	table.insert(tabButtons, tabBtn)
+
+	local capturedCat = category
+	tabBtn.MouseButton1Click:Connect(function()
+		setActiveTabColor(tabBtn)
+		showCategory(capturedCat)
+	end)
+end
+
+-- Load first category by default
+local firstCategory = next(animationSets)
+if firstCategory then
+	showCategory(firstCategory)
+	activeCategory = firstCategory
+end
+
+-- ──────────────────────────────────────────────
+-- BLOCK CORE ANIMATIONS
+-- ──────────────────────────────────────────────
+local function blockCoreAnimations(char)
+	if not char then return end
+	local animFolder = char:FindFirstChild("Animations")
+	if not animFolder then return end
+	local blockList = {"Idle", "Walk", "Sprint", "Jump", "Sit", "PassiveAnimation"}
+	for _, name in ipairs(blockList) do
+		local anim = animFolder:FindFirstChild(name)
+		if anim then
+			local dummy = Instance.new("Animation")
+			dummy.Name = anim.Name
+			dummy.AnimationId = ""
+			dummy.Parent = animFolder
+			anim:Destroy()
+		end
+	end
+end
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+	char:WaitForChild("HumanoidRootPart", 5)
+	task.wait(0.5)
+	blockCoreAnimations(char)
+	if activeSetName and activeCategory then
+		loadAnimationSet(char, activeCategory, activeSetName)
+	end
+end)
+
+if LocalPlayer.Character then
+	task.delay(1, function()
+		blockCoreAnimations(LocalPlayer.Character)
+		if activeSetName and activeCategory then
+			loadAnimationSet(LocalPlayer.Character, activeCategory, activeSetName)
+		end
+	end)
+end
+
+-- ──────────────────────────────────────────────
+-- TOGGLE / CLOSE
+-- ──────────────────────────────────────────────
+toggleButton.MouseButton1Click:Connect(function()
+	mainFrame.Visible = not mainFrame.Visible
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+	mainFrame.Visible = false
+end)
+
+UserInputService.InputBegan:Connect(function(input, gp)
+	if gp then return end
+	if input.KeyCode == Enum.KeyCode.M then
+		mainFrame.Visible = not mainFrame.Visible
+	end
+end)
