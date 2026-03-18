@@ -135,7 +135,6 @@ local animationSets = {
 local blendTime = 0.2
 local activeSetName, activeCategory = nil, nil
 local characterData = {}
-local favourites = {}
 local currentTabCategory = nil
 local currentSearchText = ""
 
@@ -148,6 +147,35 @@ local tabShortNames = {
 	Artful = "A",
 	Other = "?"
 }
+
+-- ──────────────────────────────────────────────
+-- FAVOURITES: persistent save/load via writefile
+-- ──────────────────────────────────────────────
+local FAVS_FILE = "anim_favourites.txt"
+
+local favourites = {}
+
+local function saveFavourites()
+	local lines = {}
+	for key in pairs(favourites) do
+		table.insert(lines, key)
+	end
+	writefile(FAVS_FILE, table.concat(lines, "\n"))
+end
+
+local function loadFavourites()
+	if isfile(FAVS_FILE) then
+		local content = readfile(FAVS_FILE)
+		for _, line in ipairs(string.split(content, "\n")) do
+			line = line:match("^%s*(.-)%s*$") -- trim whitespace
+			if line ~= "" then
+				favourites[line] = true
+			end
+		end
+	end
+end
+
+loadFavourites()
 
 local function getFavKey(category, setName)
 	return category .. "|" .. setName
@@ -164,8 +192,12 @@ local function toggleFavourite(category, setName)
 	else
 		favourites[key] = true
 	end
+	saveFavourites()
 end
 
+-- ──────────────────────────────────────────────
+-- ANIMATION LOADER
+-- ──────────────────────────────────────────────
 local function loadAnimationSet(character, category, setName)
 	if not character or not category or not setName then return end
 	local set = animationSets[category][setName]
@@ -219,14 +251,15 @@ local function loadAnimationSet(character, category, setName)
 	end)
 end
 
--- GUI Setup
+-- ──────────────────────────────────────────────
+-- GUI SETUP
+-- ──────────────────────────────────────────────
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "AnimationMenuGui"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = PlayerGui
 
--- Toggle button
 local toggleButton = Instance.new("TextButton")
 toggleButton.Size = UDim2.new(0, 60, 0, 40)
 toggleButton.Position = UDim2.new(1, -70, 0.5, -20)
@@ -240,7 +273,6 @@ toggleButton.Draggable = true
 toggleButton.Parent = screenGui
 Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 10)
 
--- Main frame
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 340, 0, 460)
 mainFrame.Position = UDim2.new(1, -360, 0, 20)
@@ -253,7 +285,6 @@ mainFrame.ClipsDescendants = true
 mainFrame.Parent = screenGui
 Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 14)
 
--- Title
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Size = UDim2.new(1, 0, 0, 36)
 titleLabel.Position = UDim2.new(0, 0, 0, 0)
@@ -264,7 +295,6 @@ titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextScaled = true
 titleLabel.Parent = mainFrame
 
--- Active animation label
 local activeLabel = Instance.new("TextLabel")
 activeLabel.Size = UDim2.new(1, -20, 0, 18)
 activeLabel.Position = UDim2.new(0, 10, 0, 37)
@@ -276,7 +306,6 @@ activeLabel.TextSize = 13
 activeLabel.TextXAlignment = Enum.TextXAlignment.Left
 activeLabel.Parent = mainFrame
 
--- Close button
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 36, 0, 36)
 closeBtn.Position = UDim2.new(1, -40, 0, 2)
@@ -289,7 +318,6 @@ closeBtn.ZIndex = 10
 closeBtn.Parent = mainFrame
 Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(0, 6)
 
--- Tab bar — scrollable horizontally, fully clipped inside mainFrame
 local tabBar = Instance.new("ScrollingFrame")
 tabBar.Size = UDim2.new(1, -20, 0, 30)
 tabBar.Position = UDim2.new(0, 10, 0, 60)
@@ -308,7 +336,6 @@ tabList.VerticalAlignment = Enum.VerticalAlignment.Center
 tabList.Padding = UDim.new(0, 4)
 tabList.Parent = tabBar
 
--- Search bar
 local searchBox = Instance.new("TextBox")
 searchBox.Size = UDim2.new(1, -20, 0, 28)
 searchBox.Position = UDim2.new(0, 10, 0, 96)
@@ -324,7 +351,6 @@ searchBox.BorderSizePixel = 0
 searchBox.Parent = mainFrame
 Instance.new("UICorner", searchBox).CornerRadius = UDim.new(0, 8)
 
--- Scroll frame (animation list)
 local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Size = UDim2.new(1, -20, 1, -132)
 scrollFrame.Position = UDim2.new(0, 10, 0, 130)
@@ -536,7 +562,6 @@ local function setActiveTabColor(activeTab)
 	activeTab.BackgroundColor3 = Color3.fromRGB(80, 110, 180)
 end
 
--- Favourites tab
 local favTabBtn = Instance.new("TextButton")
 favTabBtn.Size = UDim2.new(0, 36, 0, 28)
 favTabBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -555,7 +580,6 @@ favTabBtn.MouseButton1Click:Connect(function()
 	showFavourites()
 end)
 
--- Category tabs
 for category in pairs(animationSets) do
 	local tabBtn = Instance.new("TextButton")
 	tabBtn.Size = UDim2.new(0, 36, 0, 28)
